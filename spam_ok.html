@@ -1,0 +1,48 @@
+<DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <title>スパム判定</title>
+  <body>
+    <h1>テキストのスパム判定</h1>
+    <p>送信されたテキストがスパムに該当するかどうかを検証します。
+      <br />ついでに感情分析もしときます。。</p>
+    <p>以下のボックス内に判定したい文章を入力して、判定ボタンを押してください。</p>
+    <div>
+      <textarea id="q" rows="10" cols="100"></textarea>
+      <br><button id="qButton">判定</button>
+      <div id="result"></div>
+    </div>
+
+    <script>
+    const qs = (q) => document.querySelector(q)
+    window.onload = () => {
+      const q = qs('#q')
+      const qButton = qs('#qButton')
+      const result = qs('#result')
+      // 判定ボタンを押した時
+      qButton.onclick = () => {
+        result.innerHTML = "..."
+        // APIサーバーに送信するURLを構築
+        const api = "/api?q=" + encodeURIComponent(q.value)
+        // APIにアクセス
+        fetch(api).then((res) => {
+          return res.json() // jsonで返す
+        }).then((data) => {
+          // 結果を画面に表示
+          result.innerHTML =
+            data["label"] +
+            "<span style='font-size:0.5em'>(" +
+            data["pnmean"] + ")</span>"
+        })
+      }
+    }
+    </script>
+    <style>
+    body {margin-left: 340px;}
+    button {font-size: 20px;}
+    #result { padding: 10px; font-size: 2em; color: red; }
+    #q { background-color: #f0fff0; }
+    </style>
+  </body>
+  </html>
